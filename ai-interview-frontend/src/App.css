@@ -1,38 +1,118 @@
-.App {
-  text-align: center;
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-container {
+  background-image: url("./assets/Background.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.login-page {
+  background-image: url("./assets/Background.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.top-left-title {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: rgb(33, 109, 76);
+  z-index: 1;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1;
+}
+
+.login-form h2 {
+  color: rgb(8, 99, 104);
+  margin-bottom: 1rem;
+}
+
+.login-form input {
+  padding: 10px 15px;
+  width: 250px;
+  border: none;
+  border-bottom: 2px solid rgb(15, 1, 1);
+  background: transparent;
+  color: rgb(25, 2, 2);
+  font-size: 1rem;
+  outline: none;
+}
+
+.login-form input::placeholder {
+  color: rgba(29, 1, 1, 0.7);
+}
+
+.login-form button {
+  padding: 10px 15px;
+  width: 250px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgb(31, 3, 3);
+  color: rgb(12, 63, 52);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.register-text {
+  color: rgb(73, 2, 19);
+  font-size: 0.9rem;
+}
+
+.register-link {
+  text-decoration: underline;
+  color: #b89f9f;
+  cursor: pointer;
+}
+
+.register-link:hover {
+  color: rgb(24, 3, 57);
+}
+
+.error-text {
+  color: red;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.success-text {
+  color: green;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+.switch-form-text {
+  margin-top: 1rem;
+  color: #222;
+  font-weight: 500;
 }
