@@ -22,7 +22,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/users/register",
+        "http://localhost:4000/api/users/register",
         formData
       );
       setSuccess(res.data.message);

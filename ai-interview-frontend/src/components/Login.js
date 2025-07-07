@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/users/login",
+        "http://localhost:4000/api/users/login",
         formData
       );
       setSuccess(res.data.message);

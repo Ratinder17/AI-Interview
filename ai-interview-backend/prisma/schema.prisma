@@ -20,3 +20,10 @@ model User {
   email String @unique
   password String
 }
+
+model Questions {
+  id Int @id @default(autoincrement())
+  title String
+  problemStatement String
+  difficulty String
+}

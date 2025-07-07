@@ -116,3 +116,60 @@ html {
   color: #222;
   font-weight: 500;
 }
+
+.interview-container {
+  display: flex;
+  height: 100vh;
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: "Fira Code", monospace;
+}
+
+.interview-left,
+.interview-right {
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.interview-left {
+  border-right: 1px solid #541717;
+}
+
+.interview-left h2 {
+  margin-bottom: 1rem;
+  color: #80bf85;
+}
+
+.question-text {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  color: #bdbdbd;
+}
+
+.code-area {
+  width: 90%;
+  height: 70vh;
+  background-color: #1e1e1e;
+  border: 1px solid #444;
+  color: #e0e0e0;
+  font-family: "Fira Code", monospace;
+  font-size: 0.5 rem;
+  padding: 1rem;
+  border-radius: 5px;
+  resize: none;
+}
+
+.interview-right h3 {
+  color: #81c784;
+  margin-bottom: 1rem;
+}
+
+.ai-video {
+  width: 100%;
+  max-height: 60vh;
+  border-radius: 10px;
+  border: 1px solid #333;
+  margin-bottom: 1rem;
+}
