@@ -173,3 +173,23 @@ html {
   border: 1px solid #333;
   margin-bottom: 1rem;
 }
+.start-button {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.start-button button {
+  background-color: #1c7631;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-button button:hover {
+  background-color: #14c139;
+}

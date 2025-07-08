@@ -26,14 +26,19 @@ const Interview = () => {
     <div className="interview-container">
       {/* Left: Question + Answer Area */}
       <div className="interview-left">
-        <h2>{question.title}</h2>
-        <p className="question-text">{question.problemStatement}</p>
-        <textarea
-          className="code-area"
-          placeholder="// Type your solution here..."
-          value={solution}
-          onChange={(e) => setSolution(e.target.value)}
-        />
+        <div className="start-button">
+          <button>Start Interview</button>
+        </div>
+        <div className="interview-portion">
+          <h2>{question.title}</h2>
+          <p className="question-text">{question.problemStatement}</p>
+          <textarea
+            className="code-area"
+            placeholder="// Type your solution here..."
+            value={solution}
+            onChange={(e) => setSolution(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Right: AI Interviewer */}
