@@ -21,13 +21,33 @@ const Interview = () => {
   if (!question) {
     return <div className="interview-loading">Loading...</div>;
   }
-
+  const handleStart = async () => {
+    const introScript = `Hi there! Welcome to your mock technical interview. 
+  Today's question is titled "${question.title}". 
+  ${question.problemStatement}. 
+  Please take a few seconds to understand the question, and then walk me through your approach as you code. Good luck!`;
+    try {
+      const response = await fetch("http://localhost:4000/api/tts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: introScript }),
+      });
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.play();
+    } catch (err) {
+      console.error("TTS failed:", err);
+    }
+  };
   return (
     <div className="interview-container">
       {/* Left: Question + Answer Area */}
       <div className="interview-left">
         <div className="start-button">
-          <button>Start Interview</button>
+          <button onClick={handleStart}>Start Interview</button>
         </div>
         <div className="interview-portion">
           <h2>{question.title}</h2>
