@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../App.css";
+import MicStreamer from "./MicStreamer";
 
 const Interview = () => {
   const [question, setQuestion] = useState(null);
   const [solution, setSolution] = useState("");
   const [error, setError] = useState("");
+  const [startMic, setStartMic] = useState(false);
 
   useEffect(() => {
     axios
@@ -38,6 +40,9 @@ const Interview = () => {
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       audio.play();
+      audio.onended = () => {
+        setStartMic(true);
+      };
     } catch (err) {
       console.error("TTS failed:", err);
     }
@@ -58,6 +63,7 @@ const Interview = () => {
             value={solution}
             onChange={(e) => setSolution(e.target.value)}
           />
+          {startMic && <MicStreamer />}
         </div>
       </div>
 
