@@ -63,7 +63,7 @@ const Interview = () => {
             value={solution}
             onChange={(e) => setSolution(e.target.value)}
           />
-          {startMic && <MicStreamer />}
+          {startMic && <MicStreamer question={question} />}
         </div>
       </div>
 
