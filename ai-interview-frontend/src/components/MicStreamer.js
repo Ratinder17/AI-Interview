@@ -5,8 +5,13 @@ import axios from "axios";
 const MicStreamer = ({ question }) => {
   const recorderRef = useRef(null);
   const audioContextRef = useRef(null);
+  const isProcessingRef = useRef(false);
+  const isAudioPlayingRef = useRef(false); // 🆕 NEW GUARD
 
   const startInteraction = async () => {
+    if (isProcessingRef.current || isAudioPlayingRef.current) return;
+    isProcessingRef.current = true;
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -20,19 +25,17 @@ const MicStreamer = ({ question }) => {
       recorderRef.current = recorder;
 
       setTimeout(async () => {
-        const { blob: wavBlob } = await recorderRef.current.stop();
-        stream.getTracks().forEach((track) => track.stop());
-
-        const formData = new FormData();
-        formData.append("audio", wavBlob, "recording.wav");
-
         try {
+          const { blob: wavBlob } = await recorderRef.current.stop();
+          stream.getTracks().forEach((track) => track.stop());
+
+          const formData = new FormData();
+          formData.append("audio", wavBlob, "recording.wav");
+
           const response = await axios.post(
             "http://localhost:4000/api/transcribe",
             formData,
-            {
-              headers: { "Content-Type": "multipart/form-data" },
-            }
+            { headers: { "Content-Type": "multipart/form-data" } }
           );
 
           const transcript = response.data.transcript;
@@ -40,13 +43,14 @@ const MicStreamer = ({ question }) => {
 
           if (!transcript || transcript.trim().length < 2) {
             console.warn("🛑 Skipping empty or short transcript");
-            startInteraction(); // retry recording
+            isProcessingRef.current = false;
+            startInteraction();
             return;
           }
 
           const aiRes = await axios.post("http://localhost:4000/api/openai", {
             transcript,
-            question, // full question object with title and problemStatement
+            question,
           });
 
           const aiReply = aiRes.data.reply;
@@ -62,32 +66,69 @@ const MicStreamer = ({ question }) => {
           const audioURL = URL.createObjectURL(audioBlob);
           const finalAudio = new Audio(audioURL);
 
+          isAudioPlayingRef.current = true;
+
           finalAudio.onended = () => {
+            isAudioPlayingRef.current = false;
+            isProcessingRef.current = false;
             console.log("🔁 Restarting recording...");
             startInteraction();
           };
 
-          finalAudio.play();
+          finalAudio.onerror = () => {
+            console.error("🎵 Audio playback failed");
+            isAudioPlayingRef.current = false;
+            isProcessingRef.current = false;
+            startInteraction();
+          };
+
+          finalAudio.play().catch((err) => {
+            console.error("Playback error:", err);
+            isAudioPlayingRef.current = false;
+            isProcessingRef.current = false;
+            startInteraction();
+          });
         } catch (err) {
-          console.error("Transcription or AI error:", err);
+          console.error("🔴 Interaction inner error:", err);
+          isProcessingRef.current = false;
+          startInteraction(); // retry interaction on error
         }
-      }, 3000);
+      }, 3000); // optional: 6000ms if you're not using VAD
     } catch (err) {
       console.error("Mic access error:", err);
+      isProcessingRef.current = false;
+      setTimeout(() => {
+        console.log("🔁 Retrying mic access after failure");
+        startInteraction();
+      }, 9000);
     }
   };
 
   useEffect(() => {
-    startInteraction();
+    const safeStart = async () => {
+      try {
+        await startInteraction();
+      } catch (err) {
+        console.error("💥 Interaction crashed:", err);
+        setTimeout(() => {
+          console.log("🔁 Retrying interaction after crash");
+          safeStart(); // recursive retry on top-level crash
+        }, 9000);
+      }
+    };
+
+    safeStart();
 
     return () => {
       if (recorderRef.current) recorderRef.current.stop();
     };
   }, []);
 
-  return (
-    <p style={{ color: "green" }}>🎙️ Listening for your next response...</p>
-  );
+  return null; // this component doesn't render anything
 };
 
 export default MicStreamer;
+
+/*
+
+*/
