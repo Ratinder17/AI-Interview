@@ -8,6 +8,7 @@ const Interview = () => {
   const [solution, setSolution] = useState("");
   const [error, setError] = useState("");
   const [startMic, setStartMic] = useState(false);
+  const [muted, setMuted] = useState(false); // New state for mute
 
   useEffect(() => {
     axios
@@ -16,18 +17,12 @@ const Interview = () => {
       .catch(() => setError("Failed to load question"));
   }, []);
 
-  if (error) {
-    return <div className="interview-loading">{error}</div>;
-  }
-
-  if (!question) {
-    return <div className="interview-loading">Loading...</div>;
-  }
   const handleStart = async () => {
     const introScript = `Hi there! Welcome to your mock technical interview. 
-  Today's question is titled "${question.title}". 
-  ${question.problemStatement}. 
-  Please take a few seconds to understand the question, and then walk me through your approach as you code. Good luck!`;
+    Today's question is titled "${question.title}". 
+    ${question.problemStatement}. 
+    Please take a few seconds to understand the question, and then walk me through your approach as you code. Good luck!`;
+
     try {
       const response = await fetch("http://localhost:4000/api/tts", {
         method: "POST",
@@ -47,6 +42,19 @@ const Interview = () => {
       console.error("TTS failed:", err);
     }
   };
+
+  const toggleMute = () => {
+    setMuted((prev) => !prev);
+  };
+
+  if (error) {
+    return <div className="interview-loading">{error}</div>;
+  }
+
+  if (!question) {
+    return <div className="interview-loading">Loading...</div>;
+  }
+
   return (
     <div className="interview-container">
       {/* Left: Question + Answer Area */}
@@ -63,7 +71,6 @@ const Interview = () => {
             value={solution}
             onChange={(e) => setSolution(e.target.value)}
           />
-          {startMic && <MicStreamer question={question} />}
         </div>
       </div>
 
@@ -77,6 +84,10 @@ const Interview = () => {
           loop
           className="ai-video"
         />
+        <button onClick={toggleMute} className="mic-toggle-btn">
+          {muted ? "🔇 Unmute" : "🎙️ Mute"}
+        </button>
+        {!muted && <MicStreamer question={question} />}
       </div>
     </div>
   );

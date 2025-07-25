@@ -193,3 +193,18 @@ html {
 .start-button button:hover {
   background-color: #14c139;
 }
+
+.mic-toggle-btn {
+  margin: 10px 0;
+  padding: 8px 12px;
+  font-size: 1rem;
+  background-color: #b85454;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mic-toggle-btn:hover {
+  background-color: #b24646;
+}
