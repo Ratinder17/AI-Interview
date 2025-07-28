@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "../App.css";
 import MicStreamer from "./MicStreamer";
@@ -8,7 +8,9 @@ const Interview = () => {
   const [solution, setSolution] = useState("");
   const [error, setError] = useState("");
   const [startMic, setStartMic] = useState(false);
-  const [muted, setMuted] = useState(false); // New state for mute
+  const [muted, setMuted] = useState(true);
+
+  const micRef = useRef(null);
 
   useEffect(() => {
     axios
@@ -18,6 +20,8 @@ const Interview = () => {
   }, []);
 
   const handleStart = async () => {
+    if (!question) return;
+
     const introScript = `Hi there! Welcome to your mock technical interview. 
     Today's question is titled "${question.title}". 
     ${question.problemStatement}. 
@@ -43,8 +47,18 @@ const Interview = () => {
     }
   };
 
-  const toggleMute = () => {
-    setMuted((prev) => !prev);
+  const toggleMute = async () => {
+    if (muted) {
+      try {
+        await micRef.current?.startRecording();
+        setMuted(false);
+      } catch (err) {
+        console.error("Microphone permission denied or failed to start", err);
+      }
+    } else {
+      micRef.current?.stopRecordingAndProcess();
+      setMuted(true);
+    }
   };
 
   if (error) {
@@ -87,7 +101,8 @@ const Interview = () => {
         <button onClick={toggleMute} className="mic-toggle-btn">
           {muted ? "🔇 Unmute" : "🎙️ Mute"}
         </button>
-        {!muted && <MicStreamer question={question} />}
+        {/* Render MicStreamer only after TTS intro finishes */}
+        {startMic && <MicStreamer ref={micRef} question={question} />}
       </div>
     </div>
   );
