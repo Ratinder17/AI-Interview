@@ -4,8 +4,9 @@ html {
   padding: 0;
   height: 100%;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  overflow: hidden;
+  overflow: auto; /* Changed from hidden to prevent content clipping */
 }
+
 .app-container {
   background-image: url("./assets/Background.jpg");
   background-size: cover;
@@ -111,6 +112,7 @@ html {
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
 }
+
 .switch-form-text {
   margin-top: 1rem;
   color: #339788;
@@ -155,24 +157,49 @@ html {
   border: 1px solid #444;
   color: #e0e0e0;
   font-family: "Fira Code", monospace;
-  font-size: 0.5 rem;
+  font-size: 1rem;
   padding: 1rem;
   border-radius: 5px;
   resize: none;
 }
 
-.interview-right h3 {
-  color: #81c784;
-  margin-bottom: 1rem;
+.interview-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 2rem;
+  overflow-y: auto;
 }
 
-.ai-video {
-  width: 100%;
-  max-height: 60vh;
-  border-radius: 10px;
-  border: 1px solid #333;
-  margin-bottom: 1rem;
+.interview-right h3 {
+  color: #81c784;
 }
+
+.timer-box {
+  margin: 12px 0;
+  padding: 8px 12px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #0e0c0c;
+  border: 2px solid #444;
+  border-radius: 8px;
+  color: #00ff99;
+  text-align: center;
+}
+
+.timer-label {
+  color: #ffffff;
+  font-size: 40px;
+}
+
+.timer-value {
+  font-family: monospace;
+  color: #00ff99;
+  font-size: 40px;
+  margin-left: 6px;
+}
+
 .start-button {
   display: flex;
   justify-content: center;

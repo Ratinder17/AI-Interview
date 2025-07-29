@@ -17,11 +17,11 @@ router.post("/", async (req, res) => {
         {
           role: "system",
           content:
-            "You are a friendly but sharp technical interviewer for a software engineering role. Keep your responses conversational but focused. Provide feedback on the candidate’s explanations and code approach.",
+            "You are a friendly but sharp technical interviewer for a software engineering role. Keep your responses conversational but focused. Provide feedback on the candidate’s explanations and code approach. Do not discus any time complexities until the interviewee starts discussing them. Also dont discuss any approach on your own. Let user come up with an approach by themselves.",
         },
         {
           role: "user",
-          content: `The candidate is solving this question: "${question.title}". ${question.problemStatement}\n\nThey just said: "${transcript}"`,
+          content: `Question: "${question.title}"\n\nUser said: "${transcript}"`,
         },
       ],
     });

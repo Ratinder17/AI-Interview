@@ -9,8 +9,11 @@ const Interview = () => {
   const [error, setError] = useState("");
   const [startMic, setStartMic] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(1 * 40);
+  const [interviewStarted, setInterviewStarted] = useState(false);
 
   const micRef = useRef(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     axios
@@ -19,8 +22,32 @@ const Interview = () => {
       .catch(() => setError("Failed to load question"));
   }, []);
 
+  // Timer logic
+  useEffect(() => {
+    if (!interviewStarted) return;
+
+    if (timeLeft <= 0) {
+      alert("Time is up! The interview has ended.");
+      setStartMic(false);
+      if (micRef.current) {
+        micRef.current.stopRecordingAndProcess();
+        setMuted(true);
+      }
+      clearInterval(timerRef.current);
+      return;
+    }
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timerRef.current);
+  }, [interviewStarted, timeLeft]);
+
   const handleStart = async () => {
     if (!question) return;
+
+    setInterviewStarted(true);
 
     const introScript = `Hi there! Welcome to your mock technical interview. 
     Today's question is titled "${question.title}". 
@@ -61,6 +88,14 @@ const Interview = () => {
     }
   };
 
+  const formatTime = (seconds) => {
+    const min = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const sec = (seconds % 60).toString().padStart(2, "0");
+    return `${min}:${sec}`;
+  };
+
   if (error) {
     return <div className="interview-loading">{error}</div>;
   }
@@ -84,25 +119,29 @@ const Interview = () => {
             placeholder="// Type your solution here..."
             value={solution}
             onChange={(e) => setSolution(e.target.value)}
+            disabled={timeLeft <= 0}
           />
         </div>
       </div>
 
       {/* Right: AI Interviewer */}
       <div className="interview-right">
-        <h3>AI Interviewer</h3>
-        <video
-          src="/ai-interviewer.mp4"
-          controls
-          autoPlay
-          loop
-          className="ai-video"
-        />
-        <button onClick={toggleMute} className="mic-toggle-btn">
+        <div className="timer-box">
+          <span className="timer-label">Time Left:</span>
+          <span className="timer-value">{formatTime(timeLeft)}</span>
+        </div>
+
+        <button
+          onClick={toggleMute}
+          className="mic-toggle-btn"
+          disabled={timeLeft <= 0}
+        >
           {muted ? "🔇 Unmute" : "🎙️ Mute"}
         </button>
-        {/* Render MicStreamer only after TTS intro finishes */}
-        {startMic && <MicStreamer ref={micRef} question={question} />}
+
+        {startMic && timeLeft > 0 && (
+          <MicStreamer ref={micRef} question={question} />
+        )}
       </div>
     </div>
   );
