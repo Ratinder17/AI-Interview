@@ -2,10 +2,11 @@ import React, { useImperativeHandle, useRef, forwardRef } from "react";
 import Recorder from "recorder-js";
 import axios from "axios";
 
-const MicStreamer = forwardRef(({ question }, ref) => {
+const MicStreamer = forwardRef(({ question, solution }, ref) => {
   const recorderRef = useRef(null);
   const audioContextRef = useRef(null);
   const streamRef = useRef(null);
+  const previousCodeRef = useRef(solution);
 
   const cleanup = () => {
     if (recorderRef.current) {
@@ -16,6 +17,22 @@ const MicStreamer = forwardRef(({ question }, ref) => {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
+  };
+
+  const getCodeDiff = (oldCode, newCode) => {
+    const oldLines = oldCode.split("\n");
+    const newLines = newCode.split("\n");
+    const diffLines = [];
+
+    newLines.forEach((line, index) => {
+      if (line !== oldLines[index]) {
+        diffLines.push(`Line ${index + 1}: ${line}`);
+      }
+    });
+
+    return diffLines.length > 0
+      ? diffLines.join("\n")
+      : "[No significant code changes]";
   };
 
   const startRecording = async () => {
@@ -65,8 +82,13 @@ const MicStreamer = forwardRef(({ question }, ref) => {
         return;
       }
 
+      const codeDiff = getCodeDiff(previousCodeRef.current, solution);
+      previousCodeRef.current = solution;
+
+      const combinedTranscript = `${transcript}\n\nHere are the recent code changes:\n${codeDiff}`;
+
       const aiRes = await axios.post("http://localhost:4000/api/openai", {
-        transcript,
+        transcript: combinedTranscript,
         question,
       });
 

@@ -9,7 +9,7 @@ const Interview = () => {
   const [error, setError] = useState("");
   const [startMic, setStartMic] = useState(false);
   const [muted, setMuted] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(1 * 40);
+  const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [interviewStarted, setInterviewStarted] = useState(false);
 
   const micRef = useRef(null);
@@ -22,7 +22,6 @@ const Interview = () => {
       .catch(() => setError("Failed to load question"));
   }, []);
 
-  // Timer logic
   useEffect(() => {
     if (!interviewStarted) return;
 
@@ -44,22 +43,41 @@ const Interview = () => {
     return () => clearInterval(timerRef.current);
   }, [interviewStarted, timeLeft]);
 
+  useEffect(() => {
+    if (!interviewStarted || timeLeft <= 0 || !solution.trim()) return;
+
+    const delayDebounce = setTimeout(() => {
+      axios
+        .post("http://localhost:4000/api/openai", {
+          transcript: solution,
+          question,
+          inputType: "code",
+        })
+        .then((res) => {
+          console.log("AI feedback on code:", res.data.reply);
+        })
+        .catch((err) => {
+          console.error("Failed to send code update:", err);
+        });
+    }, 10000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [solution]);
+
   const handleStart = async () => {
     if (!question) return;
 
     setInterviewStarted(true);
 
-    const introScript = `Hi there! Welcome to your mock technical interview. 
-    Today's question is titled "${question.title}". 
-    ${question.problemStatement}. 
+    const introScript = `Hi there! Welcome to your mock technical interview.
+    Today's question is titled "${question.title}".
+    ${question.problemStatement}.
     Please take a few seconds to understand the question, and then walk me through your approach as you code. Good luck!`;
 
     try {
       const response = await fetch("http://localhost:4000/api/tts", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: introScript }),
       });
       const blob = await response.blob();
@@ -106,7 +124,6 @@ const Interview = () => {
 
   return (
     <div className="interview-container">
-      {/* Left: Question + Answer Area */}
       <div className="interview-left">
         <div className="start-button">
           <button onClick={handleStart}>Start Interview</button>
@@ -124,7 +141,6 @@ const Interview = () => {
         </div>
       </div>
 
-      {/* Right: AI Interviewer */}
       <div className="interview-right">
         <div className="timer-box">
           <span className="timer-label">Time Left:</span>
@@ -140,7 +156,7 @@ const Interview = () => {
         </button>
 
         {startMic && timeLeft > 0 && (
-          <MicStreamer ref={micRef} question={question} />
+          <MicStreamer ref={micRef} question={question} solution={solution} />
         )}
       </div>
     </div>
