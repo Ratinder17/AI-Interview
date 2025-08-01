@@ -67,7 +67,7 @@ const MicStreamer = forwardRef(({ question, solution }, ref) => {
       formData.append("audio", wavBlob, "recording.wav");
 
       const response = await axios.post(
-        "http://localhost:4000/api/transcribe",
+        "https://ai-interview-backend-7gws.onrender.com/api/transcribe",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -87,7 +87,7 @@ const MicStreamer = forwardRef(({ question, solution }, ref) => {
 
       const combinedTranscript = `${transcript}\n\nHere are the recent code changes:\n${codeDiff}`;
 
-      const aiRes = await axios.post("http://localhost:4000/api/openai", {
+      const aiRes = await axios.post("https://ai-interview-backend-7gws.onrender.com/api/openai", {
         transcript: combinedTranscript,
         question,
       });
@@ -95,7 +95,7 @@ const MicStreamer = forwardRef(({ question, solution }, ref) => {
       const aiReply = aiRes.data.reply;
       console.log("AI Reply:", aiReply);
 
-      const ttsRes = await fetch("http://localhost:4000/api/tts", {
+      const ttsRes = await fetch("https://ai-interview-backend-7gws.onrender.com/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: aiReply }),
