@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/users/login",
+        "https://ai-interview-backend-7gws.onrender.com/api/users/login",
         formData
       );
       setSuccess(res.data.message);
