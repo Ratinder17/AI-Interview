@@ -17,7 +17,7 @@ const Interview = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/questions/random")
+      .get("https://ai-interview-backend-7gws.onrender.com/api/questions/random")
       .then((res) => setQuestion(res.data))
       .catch(() => setError("Failed to load question"));
   }, []);
@@ -48,7 +48,7 @@ const Interview = () => {
 
     const delayDebounce = setTimeout(() => {
       axios
-        .post("http://localhost:4000/api/openai", {
+        .post("https://ai-interview-backend-7gws.onrender.com/api/openai", {
           transcript: solution,
           question,
           inputType: "code",
@@ -75,7 +75,7 @@ const Interview = () => {
     Please take a few seconds to understand the question, and then walk me through your approach as you code. Good luck!`;
 
     try {
-      const response = await fetch("http://localhost:4000/api/tts", {
+      const response = await fetch("https://ai-interview-backend-7gws.onrender.com/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: introScript }),
